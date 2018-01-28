@@ -1,6 +1,5 @@
 package com.example.roni.bitcoin_ticker.view;
 
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,11 +7,15 @@ import android.util.Log;
 import com.example.roni.bitcoin_ticker.R;
 import com.example.roni.bitcoin_ticker.controller.CotationController;
 import com.example.roni.bitcoin_ticker.model.Cotation;
-import com.jjoe64.graphview.DefaultLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,9 +24,8 @@ import java.util.TimeZone;
 
 import io.reactivex.disposables.CompositeDisposable;
 
-public class MainActivity extends BaseActivity implements CotationViewInterface {
-    private GraphView graph;
-    int numHorizontalLabels;
+public class MainActivity extends BaseActivity implements CotationViewInterface{
+    private LineChart graph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class MainActivity extends BaseActivity implements CotationViewInterface 
         setContentView(R.layout.activity_main);
         controller = new CotationController(new CompositeDisposable(), this);
         graph = findViewById(R.id.graph);
+        setUpGraphView();
     }
 
     @Override
@@ -39,10 +42,73 @@ public class MainActivity extends BaseActivity implements CotationViewInterface 
         ((CotationController)controller).getListOfItemsFromDataSource();
     }
 
+    private void setUpGraphView(){
+        // enable touch gestures
+        graph.setTouchEnabled(true);
+        // enable scaling and dragging
+        graph.setDragEnabled(true);
+        graph.setScaleEnabled(true);
+        graph.setDrawGridBackground(false);
+        // Hide the graph description
+        Description description = new Description();
+        description.setText("");
+        graph.setDescription(description);
+    }
+
     @Override
     public void onCotationRequestSuccess(Cotation cotation) {
         Log.v("Controller", cotation.getPeriod());
+        setUpGraphDataToBeShown(cotation.getPoints());
+    }
 
+    /**
+     * Create a Line graph with the array of graph points and update the view
+     * @param cotationXYPoints holds the x and y values, where x is a unix timestamp
+     *                         and y is the price in dollars
+     */
+    private void setUpGraphDataToBeShown(ArrayList<Cotation.GraphPoint> cotationXYPoints){
+        // Create an array of entries with of the x and y values
+        ArrayList<Entry> points = new ArrayList<>();
+        for(Cotation.GraphPoint graphPoint: cotationXYPoints ){
+            points.add(new Entry((float)graphPoint.getX(), (float)graphPoint.getY()));
+        }
+        // Create a line data set and set it to the graph
+        LineDataSet lineDataSet = new LineDataSet(points, getString(R.string.bitcoin_price));
+        lineDataSet.setLineWidth(1f);
+        lineDataSet.setValueTextSize(10f);
+        lineDataSet.setValueTextColor(Color.BLUE);
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(lineDataSet);
+        LineData lineData = new LineData(dataSets);
+        graph.setData(lineData);
+
+        // Set up the x axis of the graph to show the date value
+        XAxis xAxis = graph.getXAxis();
+        xAxis.setValueFormatter(new MyXAxisValueFormatter());
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        graph.invalidate();
+    }
+
+    public String convertUnixTimestampToStringFormattedDate(double timeStamp){
+        long value = Double.valueOf(timeStamp).longValue();
+        // convert seconds to milliseconds
+        Date date = new Date(value*1000L);
+        // the format of your date
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-YYYY");
+        // give a timezone reference for formatting (see comment at the bottom)
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT-3"));
+        String formattedDate = sdf.format(date);
+        return formattedDate;
+    }
+
+    /**
+     * Show a string value in the x-axis instead of a float one
+     */
+    public class MyXAxisValueFormatter implements IAxisValueFormatter {
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return convertUnixTimestampToStringFormattedDate(value);
+        }
     }
 
     @Override

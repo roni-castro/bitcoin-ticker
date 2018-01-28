@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">bitcoin-ticker</string>
+    <string name="app_name">Bitcoin Ticker</string>
+    <string name="blockchain_market_price_desc">Average USD market price across major bitcoin exchanges since 2017</string>
+    <string name="bitcoin_price">Bitcoin price in dollars</string>
 </resources>
