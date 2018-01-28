@@ -5,14 +5,11 @@ import com.example.roni.bitcoin_ticker.model.CotationService;
 import com.example.roni.bitcoin_ticker.model.Ticker;
 import com.example.roni.bitcoin_ticker.network.RetofitCotationService;
 import com.example.roni.bitcoin_ticker.view.CotationViewInterface;
-import com.google.gson.GsonBuilder;
 
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -21,13 +18,26 @@ import io.reactivex.schedulers.Schedulers;
  * Created by roni on 25/01/18.
  */
 
-public class CotationController extends Controller {
+public class ApiController {
+    private CompositeDisposable compositeDisposable;
     private CotationViewInterface cotationViewInterface;
 
-    public CotationController(CompositeDisposable compositeDisposable,
-                              CotationViewInterface cotationViewInterface){
+    public ApiController(CompositeDisposable compositeDisposable,
+                         CotationViewInterface cotationViewInterface){
         this.compositeDisposable = compositeDisposable;
         this.cotationViewInterface = cotationViewInterface;
+    }
+
+    public void onDestroy() {
+        if(compositeDisposable != null) {
+            compositeDisposable.clear();
+        }
+    }
+
+    public void onStop() {
+        if(compositeDisposable != null) {
+            compositeDisposable.clear();
+        }
     }
 
     public void getListOfItemsFromDataSource(){
@@ -75,5 +85,7 @@ public class CotationController extends Controller {
     private void handleError(Throwable error) {
         cotationViewInterface.showErrorMessage(error.getLocalizedMessage());
     }
+
+
 
 }

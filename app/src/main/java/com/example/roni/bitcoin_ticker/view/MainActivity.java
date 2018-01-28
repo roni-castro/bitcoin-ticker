@@ -1,6 +1,5 @@
 package com.example.roni.bitcoin_ticker.view;
 
-import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,11 +8,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.roni.bitcoin_ticker.R;
-import com.example.roni.bitcoin_ticker.controller.CotationController;
+import com.example.roni.bitcoin_ticker.controller.ApiController;
+import com.example.roni.bitcoin_ticker.controller.DBCotationController;
 import com.example.roni.bitcoin_ticker.model.Cotation;
+import com.example.roni.bitcoin_ticker.model.GraphPoint;
 import com.example.roni.bitcoin_ticker.model.Ticker;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -28,6 +28,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -41,7 +42,8 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        controller = new CotationController(new CompositeDisposable(), this);
+        apiController = new ApiController(new CompositeDisposable(), this);
+        dbCotationController = new DBCotationController(this,this);
         graph = findViewById(R.id.graph);
         progressBar = findViewById(R.id.progress_bar);
         tickerUSD = findViewById(R.id.ticker_usd);
@@ -51,8 +53,8 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
     @Override
     protected void onResume() {
         super.onResume();
-        ((CotationController)controller).getListOfItemsFromDataSource();
-        ((CotationController)controller).getLastBitcoinTickerFromAPI();
+        apiController.getListOfItemsFromDataSource();
+        apiController.getLastBitcoinTickerFromAPI();
     }
 
     private void setUpGraphView(){
@@ -70,8 +72,9 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
 
     @Override
     public void onCotationRequestSuccess(Cotation cotation) {
-        Log.v("Controller", cotation.getPeriod());
+        Log.v("ApiController", cotation.getPeriod());
         setUpGraphDataToBeShown(cotation.getPoints());
+        dbCotationController.saveCotationInDB();
     }
 
     @Override
@@ -107,10 +110,10 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
      * @param cotationXYPoints holds the x and y values, where x is a unix timestamp
      *                         and y is the price in dollars
      */
-    private void setUpGraphDataToBeShown(ArrayList<Cotation.GraphPoint> cotationXYPoints){
+    private void setUpGraphDataToBeShown(List<GraphPoint> cotationXYPoints){
         // Create an array of entries with of the x and y values
         ArrayList<Entry> points = new ArrayList<>();
-        for(Cotation.GraphPoint graphPoint: cotationXYPoints ){
+        for(GraphPoint graphPoint: cotationXYPoints ){
             points.add(new Entry((float)graphPoint.getX(), (float)graphPoint.getY()));
         }
         // Create a line data set and set it to the graph
