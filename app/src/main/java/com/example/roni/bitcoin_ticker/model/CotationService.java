@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 public interface CotationService {
     public static final String BASE_URL = "https://api.blockchain.info/charts/";
 
-    @GET("market-price?timespan=1year")
-    Observable<Cotation> getCotations(@Query("format") String format);
+    @GET("market-price?format=json")
+    Observable<Cotation> getCotations(@Query("timespan") String timeStamp);
 
 }
