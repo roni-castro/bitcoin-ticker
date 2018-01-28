@@ -1,27 +1,17 @@
 package com.example.roni.bitcoin_ticker.controller;
 
-import com.example.roni.bitcoin_ticker.model.ApiRequestInterface;
-import com.example.roni.bitcoin_ticker.model.Cotation;
-import com.example.roni.bitcoin_ticker.view.ViewInterface;
-
-import java.util.List;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
- * Created by roni on 25/01/18.
+ * Created by roni on 28/01/18.
  */
 
 public class Controller {
-    private ApiRequestInterface apiRequestInterface;
-    private ViewInterface viewInterface;
+    protected CompositeDisposable compositeDisposable;
 
-    public Controller(ApiRequestInterface apiRequestInterface, ViewInterface viewInterface){
-        this.apiRequestInterface = apiRequestInterface;
-        this.viewInterface = viewInterface;
-
-        getListOfItemsFromDataSource();
-    }
-
-    public void getListOfItemsFromDataSource(){
-        apiRequestInterface.getCotationFromAPI();
+    public void onDestroy() {
+        if(compositeDisposable != null) {
+            compositeDisposable.clear();
+        }
     }
 }

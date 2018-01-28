@@ -8,6 +8,7 @@ import java.util.List;
  * Created by roni on 25/01/18.
  */
 
-public interface ViewInterface {
-    void setUpBtcPrice(Cotation cotation);
+public interface CotationViewInterface {
+    void onCotationRequestSuccess(Cotation cotation);
+    void showErrorMessage(String message);
 }
