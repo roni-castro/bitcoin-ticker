@@ -1,6 +1,8 @@
 package com.example.roni.bitcoin_ticker.model;
 
 
+import java.util.Map;
+
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -10,9 +12,13 @@ import retrofit2.http.Query;
  */
 
 public interface CotationService {
-    public static final String BASE_URL = "https://api.blockchain.info/charts/";
+    // TODO BASE URL MUST BE A PRIVATE SERVER
+    public static final String BASE_URL = "https://api.blockchain.info/";
 
-    @GET("market-price?format=json")
+    @GET("charts/market-price?format=json")
     Observable<Cotation> getCotations(@Query("timespan") String timeStamp);
+
+    @GET("ticker")
+    Observable<Map<String, Ticker>> getBitcoinTickerValues();
 
 }

@@ -1,12 +1,18 @@
 package com.example.roni.bitcoin_ticker.view;
 
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.roni.bitcoin_ticker.R;
 import com.example.roni.bitcoin_ticker.controller.CotationController;
 import com.example.roni.bitcoin_ticker.model.Cotation;
+import com.example.roni.bitcoin_ticker.model.Ticker;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -26,6 +32,7 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class MainActivity extends BaseActivity implements CotationViewInterface{
     private LineChart graph;
+    private TextView tickerUSD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,7 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
         setContentView(R.layout.activity_main);
         controller = new CotationController(new CompositeDisposable(), this);
         graph = findViewById(R.id.graph);
+        tickerUSD = findViewById(R.id.ticker_usd);
         setUpGraphView();
     }
 
@@ -40,6 +48,7 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
     protected void onResume() {
         super.onResume();
         ((CotationController)controller).getListOfItemsFromDataSource();
+        ((CotationController)controller).getLastBitcoinTickerFromAPI();
     }
 
     private void setUpGraphView(){
@@ -59,6 +68,29 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
     public void onCotationRequestSuccess(Cotation cotation) {
         Log.v("Controller", cotation.getPeriod());
         setUpGraphDataToBeShown(cotation.getPoints());
+    }
+
+    @Override
+    public void onTickerRequestSuccess(Ticker ticker) {
+
+        Animation a = AnimationUtils.loadAnimation(this, R.anim.animation_ticker);
+        a.reset();
+        tickerUSD.clearAnimation();
+        tickerUSD.startAnimation(a);
+
+        //show introduction and logo for Smart Shocks
+        a.setAnimationListener(new Animation.AnimationListener(){
+            @Override
+            public void onAnimationEnd(Animation fade1) {
+                tickerUSD.setText(getResources().getString(R.string.ticker_usd_value, ticker.getLast()));
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+
+            @Override
+            public void onAnimationStart(Animation animation) {}
+        });
     }
 
     /**
@@ -97,7 +129,7 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
         // the format of your date
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
         // give a timezone reference for formatting (see comment at the bottom)
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT-3"));
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         String formattedDate = sdf.format(date);
         return formattedDate;
     }

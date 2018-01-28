@@ -18,6 +18,12 @@ public class BaseActivity extends AppCompatActivity {
         controller.onDestroy();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        controller.onStop();
+    }
+
     protected void showToastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

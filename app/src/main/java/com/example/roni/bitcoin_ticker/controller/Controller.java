@@ -14,4 +14,11 @@ public class Controller {
             compositeDisposable.clear();
         }
     }
+
+    public void onStop() {
+        if(compositeDisposable != null) {
+            compositeDisposable.clear();
+        }
+    }
+
 }

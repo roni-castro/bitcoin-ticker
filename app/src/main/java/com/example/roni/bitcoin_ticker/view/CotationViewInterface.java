@@ -1,8 +1,7 @@
 package com.example.roni.bitcoin_ticker.view;
 
 import com.example.roni.bitcoin_ticker.model.Cotation;
-
-import java.util.List;
+import com.example.roni.bitcoin_ticker.model.Ticker;
 
 /**
  * Created by roni on 25/01/18.
@@ -10,5 +9,6 @@ import java.util.List;
 
 public interface CotationViewInterface {
     void onCotationRequestSuccess(Cotation cotation);
+    void onTickerRequestSuccess(Ticker ticker);
     void showErrorMessage(String message);
 }
