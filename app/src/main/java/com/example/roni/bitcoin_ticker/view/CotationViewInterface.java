@@ -10,5 +10,6 @@ import com.example.roni.bitcoin_ticker.model.Ticker;
 public interface CotationViewInterface {
     void onCotationRequestSuccess(Cotation cotation);
     void onTickerRequestSuccess(Ticker ticker);
+    void showLoading(boolean show);
     void showErrorMessage(String message);
 }

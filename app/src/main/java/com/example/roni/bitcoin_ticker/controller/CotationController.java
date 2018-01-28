@@ -45,11 +45,13 @@ public class CotationController extends Controller {
                 observable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
+                .doOnNext(__ -> cotationViewInterface.showLoading(true))
+                .doOnEach(__ -> cotationViewInterface.showLoading(false))
                 .subscribe(this::handleSuccessCotationResponse,this::handleError));
     }
 
     /**
-     * Get the bitcoin ticker price from Blockchain API
+     * Get the bitcoin ticker price from Blockchain API every 5 seconds
      */
     public void getLastBitcoinTickerFromAPI() {
         CotationService cotationService = RetofitCotationService.getInstance().create(CotationService.class);
@@ -57,14 +59,9 @@ public class CotationController extends Controller {
 
         compositeDisposable.add(Observable.interval(5, TimeUnit.SECONDS)
                 .flatMap(n -> cotationService.getBitcoinTickerValues())
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
                 .subscribe(this::handleSuccessTickerResponse,this::handleError));
-
-//        compositeDisposable.add(observable
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(this::handleSuccessTickerResponse,this::handleError));
     }
 
     private void handleSuccessCotationResponse(Cotation cotation) {

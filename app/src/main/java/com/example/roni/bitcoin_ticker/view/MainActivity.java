@@ -4,8 +4,10 @@ import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ import io.reactivex.disposables.CompositeDisposable;
 public class MainActivity extends BaseActivity implements CotationViewInterface{
     private LineChart graph;
     private TextView tickerUSD;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
         setContentView(R.layout.activity_main);
         controller = new CotationController(new CompositeDisposable(), this);
         graph = findViewById(R.id.graph);
+        progressBar = findViewById(R.id.progress_bar);
         tickerUSD = findViewById(R.id.ticker_usd);
         setUpGraphView();
     }
@@ -91,6 +95,11 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
             @Override
             public void onAnimationStart(Animation animation) {}
         });
+    }
+
+    @Override
+    public void showLoading(boolean show) {
+        progressBar.setVisibility(show? View.VISIBLE: View.GONE);
     }
 
     /**
