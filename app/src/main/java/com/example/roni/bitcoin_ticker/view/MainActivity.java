@@ -82,10 +82,11 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
         LineData lineData = new LineData(dataSets);
         graph.setData(lineData);
 
-        // Set up the x axis of the graph to show the date value
+        // Set up the x axis of the graph to show the date value (max 5 values)
         XAxis xAxis = graph.getXAxis();
         xAxis.setValueFormatter(new MyXAxisValueFormatter());
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setLabelCount(5,true);
         graph.invalidate();
     }
 
@@ -94,7 +95,7 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
         // convert seconds to milliseconds
         Date date = new Date(value*1000L);
         // the format of your date
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-YYYY");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
         // give a timezone reference for formatting (see comment at the bottom)
         sdf.setTimeZone(TimeZone.getTimeZone("GMT-3"));
         String formattedDate = sdf.format(date);
