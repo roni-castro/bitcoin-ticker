@@ -62,8 +62,7 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
     }
 
     private void loadContentFromApiOrDB(){
-        RealmResults<Cotation> realmResults = dbCotationController.loadCotationFromDB();
-        Cotation newestCotation = realmResults.last();
+        Cotation newestCotation = dbCotationController.loadCotationFromDB();
         if(newestCotation == null) {
             apiController.getListOfItemsFromDataSource();
         } else{

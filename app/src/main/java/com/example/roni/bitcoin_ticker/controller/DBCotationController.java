@@ -5,6 +5,8 @@ import android.content.Context;
 import com.example.roni.bitcoin_ticker.model.Cotation;
 import com.example.roni.bitcoin_ticker.view.CotationViewInterface;
 
+import javax.annotation.Nullable;
+
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import io.realm.RealmResults;
@@ -52,8 +54,13 @@ public class DBCotationController {
         );
     }
 
-    public RealmResults<Cotation> loadCotationFromDB(){
+    @Nullable
+    public Cotation loadCotationFromDB(){
         RealmResults<Cotation> cotations = realm.where(Cotation.class).findAll();
-        return cotations;
+        if(cotations.size() == 0){
+            return null;
+        } else{
+            return cotations.last();
+        }
     }
 }
