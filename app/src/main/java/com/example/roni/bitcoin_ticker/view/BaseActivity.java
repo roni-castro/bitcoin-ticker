@@ -1,5 +1,6 @@
 package com.example.roni.bitcoin_ticker.view;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -18,15 +19,19 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         apiController.onDestroy();
+        dbCotationController.onDestroy();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         apiController.onStop();
+        dbCotationController.onStop();
     }
 
-    protected void showToastMessage(String message){
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    protected void showToastMessage(Context context, String message){
+        if(!this.isFinishing()) {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }
     }
 }

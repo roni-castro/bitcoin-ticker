@@ -6,72 +6,89 @@
     android:layout_height="match_parent"
     tools:context="com.example.roni.bitcoin_ticker.view.MainActivity">
 
-    <TextView
-        android:id="@+id/graph_description"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_ayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="@string/blockchain_market_price_desc"
-        android:textSize="16sp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Graph description" />
+        app:layout_constraintTop_toTopOf="parent" >
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/graph"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="@+id/graph_description"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/graph_description"
-        app:layout_constraintTop_toBottomOf="@+id/graph_description"
-        app:layout_constraintVertical_bias="0.121" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/graph"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/graph">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="53dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/coin_image_desc"
-            android:src="@drawable/ic_monetization_on_white_36px" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|start"
-            android:maxLines="1"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:text="@string/current_price"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/ticker_usd"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical|start"
-            android:maxLines="1"
-            android:text="-"
-            android:textSize="20sp"
-            tools:text="11000" />
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/graph_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/blockchain_market_price_desc"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Graph description" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/graph"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                app:layout_constraintEnd_toEndOf="@+id/graph_description"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/graph_description"
+                app:layout_constraintTop_toBottomOf="@+id/graph_description"
+                app:layout_constraintVertical_bias="0.121" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/graph"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/graph">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="53dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/coin_image_desc"
+                    android:src="@drawable/ic_monetization_on_white_36px" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|start"
+                    android:maxLines="1"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="8dp"
+                    android:text="@string/current_price"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/ticker_usd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|start"
+                    android:maxLines="1"
+                    android:text="-"
+                    android:textSize="20sp"
+                    tools:text="11000" />
+            </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -81,6 +98,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

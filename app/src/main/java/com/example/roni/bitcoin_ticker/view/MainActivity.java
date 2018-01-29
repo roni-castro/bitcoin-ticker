@@ -2,6 +2,7 @@ package com.example.roni.bitcoin_ticker.view;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -32,11 +33,13 @@ import java.util.List;
 import java.util.TimeZone;
 
 import io.reactivex.disposables.CompositeDisposable;
+import io.realm.RealmResults;
 
 public class MainActivity extends BaseActivity implements CotationViewInterface{
     private LineChart graph;
     private TextView tickerUSD;
     private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +49,34 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
         dbCotationController = new DBCotationController(this,this);
         graph = findViewById(R.id.graph);
         progressBar = findViewById(R.id.progress_bar);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_ayout);
         tickerUSD = findViewById(R.id.ticker_usd);
         setUpGraphView();
+        setUpSwipeToRefreshLayout();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        apiController.getListOfItemsFromDataSource();
+        loadContentFromApiOrDB();
+    }
+
+    private void loadContentFromApiOrDB(){
+        RealmResults<Cotation> realmResults = dbCotationController.loadCotationFromDB();
+        Cotation newestCotation = realmResults.last();
+        if(newestCotation == null) {
+            apiController.getListOfItemsFromDataSource();
+        } else{
+            setUpGraphDataToBeShown(newestCotation.getValues());
+        }
         apiController.getLastBitcoinTickerFromAPI();
+    }
+
+    private void setUpSwipeToRefreshLayout(){
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            apiController.getListOfItemsFromDataSource();
+            swipeRefreshLayout.setRefreshing(false); // Disables the refresh icon
+        });
     }
 
     private void setUpGraphView(){
@@ -73,8 +95,8 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
     @Override
     public void onCotationRequestSuccess(Cotation cotation) {
         Log.v("ApiController", cotation.getPeriod());
-        setUpGraphDataToBeShown(cotation.getPoints());
-        dbCotationController.saveCotationInDB();
+        setUpGraphDataToBeShown(cotation.getValues());
+        dbCotationController.saveCotationInDB(cotation);
     }
 
     @Override
@@ -98,6 +120,11 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
             @Override
             public void onAnimationStart(Animation animation) {}
         });
+    }
+
+    @Override
+    public void onDBSaveSuccess() {
+        Log.v("MainActivity", "DB updated sucessfully");
     }
 
     @Override
@@ -158,6 +185,6 @@ public class MainActivity extends BaseActivity implements CotationViewInterface{
 
     @Override
     public void showErrorMessage(String message) {
-        showToastMessage(message);
+        showToastMessage(this,message);
     }
 }

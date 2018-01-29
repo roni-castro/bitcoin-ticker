@@ -1,10 +1,5 @@
 package com.example.roni.bitcoin_ticker.model;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -15,14 +10,14 @@ import io.realm.RealmObject;
 public class Cotation extends RealmObject {
 
     private String period;
-    @SerializedName("values") private RealmList<GraphPoint> points;
+    private RealmList<GraphPoint> values;
 
     public Cotation(){
     }
 
-    public Cotation(String period, RealmList<GraphPoint> points){
+    public Cotation(String period, RealmList<GraphPoint> values){
         this.period = period;
-        this.points = points;
+        this.values = values;
     }
 
     public String getPeriod() {
@@ -33,11 +28,11 @@ public class Cotation extends RealmObject {
         this.period = period;
     }
 
-    public RealmList<GraphPoint> getPoints() {
-        return points;
+    public RealmList<GraphPoint> getValues() {
+        return values;
     }
 
-    public void setPoints(RealmList<GraphPoint> points) {
-        this.points = points;
+    public void setValues(RealmList<GraphPoint> values) {
+        this.values = values;
     }
 }
